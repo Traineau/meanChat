@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient } from "@angular/common/http";
 import { UserModel } from "../../models/user.model";
+import { CookieService } from 'angular2-cookie/core';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -8,9 +10,8 @@ export class AuthService {
 
   // variables
   private apiUrl: String = 'http://localhost:9876/api/auth'
-  private loggedIn: Boolean;
 
-  constructor( private http: HttpClient ) { }
+  constructor( private http: HttpClient, private _cookieService:CookieService ) { }
 
   public register( data: UserModel ): Promise<any>{
     // Configurer le header de la requête
@@ -46,7 +47,13 @@ export class AuthService {
     return Promise.reject(err);
   }
 
+  // Delete the hetic-blog cookie
+  public logOut(){
+    this._cookieService.remove('hetic-blog');
+  }
+
+  // Check the hetic-blog cookie to see if the user is logged in
   public isLoggedIn(){
-    return $cookies.get('hetic-blog');
+    return this._cookieService.get('hetic-blog') ? true : false;
   }
 }

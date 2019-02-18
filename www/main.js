@@ -41,7 +41,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header>\n  <p [innerHtml]=\"myStatus\"></p>\n  <nav>\n    <a routerLink=\"/\" >Home</a>\n    <a routerLink=\"/login\">Login</a>\n    <a routerLink=\"/register\">Register</a>\n  </nav>\n</header>\n  <main>\n    <router-outlet></router-outlet>\n  </main>"
+module.exports = "<header>\n  <p [innerHtml]=\"myStatus\"></p>\n  <nav>\n    <a routerLink=\"/\" >Home</a>\n    <a routerLink=\"/login\">Login</a>\n    <a routerLink=\"/register\">Register</a>\n    <a (click)=\"logOut()\">Déconnexion</a>\n  </nav>\n</header>\n  <main>\n    <router-outlet></router-outlet>\n  </main>"
 
 /***/ }),
 
@@ -64,9 +64,18 @@ __webpack_require__.r(__webpack_exports__);
 
 // Définition
 var AppComponent = /** @class */ (function () {
-    function AppComponent() {
+    function AppComponent(authService) {
+        this.authService = authService;
         this.myTitle = 'NodeJs Chat';
+        this.myStatus = authService.isLoggedIn() ? 'Connecté' : 'Deconnecté';
     }
+    AppComponent.prototype.logOut = function () {
+        console.log("Deconexion");
+        // Delete cookie with authService's function
+        this.authService.logOut();
+        // Redirection
+        window.location.href = '/';
+    };
     AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-root',
@@ -76,7 +85,7 @@ var AppComponent = /** @class */ (function () {
         })
         // Export
         ,
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_services_auth_auth_service__WEBPACK_IMPORTED_MODULE_2__["AuthService"]])
     ], AppComponent);
     return AppComponent;
 }());
@@ -101,12 +110,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
 /* harmony import */ var _app_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./app.router */ "./src/app/app.router.ts");
-/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
-/* harmony import */ var _partials_test_test_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./partials/test/test.component */ "./src/app/partials/test/test.component.ts");
-/* harmony import */ var _pages_home_page_home_page_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./pages/home-page/home-page.component */ "./src/app/pages/home-page/home-page.component.ts");
-/* harmony import */ var _pages_login_page_login_page_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pages/login-page/login-page.component */ "./src/app/pages/login-page/login-page.component.ts");
-/* harmony import */ var _pages_register_page_register_page_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pages/register-page/register-page.component */ "./src/app/pages/register-page/register-page.component.ts");
-/* harmony import */ var _pages_chat_page_chat_page_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./pages/chat-page/chat-page.component */ "./src/app/pages/chat-page/chat-page.component.ts");
+/* harmony import */ var angular2_cookie_services_cookies_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! angular2-cookie/services/cookies.service */ "./node_modules/angular2-cookie/services/cookies.service.js");
+/* harmony import */ var angular2_cookie_services_cookies_service__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(angular2_cookie_services_cookies_service__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
+/* harmony import */ var _partials_test_test_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./partials/test/test.component */ "./src/app/partials/test/test.component.ts");
+/* harmony import */ var _pages_home_page_home_page_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pages/home-page/home-page.component */ "./src/app/pages/home-page/home-page.component.ts");
+/* harmony import */ var _pages_login_page_login_page_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pages/login-page/login-page.component */ "./src/app/pages/login-page/login-page.component.ts");
+/* harmony import */ var _pages_register_page_register_page_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./pages/register-page/register-page.component */ "./src/app/pages/register-page/register-page.component.ts");
+/* harmony import */ var _pages_chat_page_chat_page_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pages/chat-page/chat-page.component */ "./src/app/pages/chat-page/chat-page.component.ts");
+
 
 
 
@@ -125,12 +137,12 @@ var AppModule = /** @class */ (function () {
     AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["NgModule"])({
             declarations: [
-                _app_component__WEBPACK_IMPORTED_MODULE_6__["AppComponent"],
-                _partials_test_test_component__WEBPACK_IMPORTED_MODULE_7__["TestComponent"],
-                _pages_home_page_home_page_component__WEBPACK_IMPORTED_MODULE_8__["HomePageComponent"],
-                _pages_login_page_login_page_component__WEBPACK_IMPORTED_MODULE_9__["LoginPageComponent"],
-                _pages_register_page_register_page_component__WEBPACK_IMPORTED_MODULE_10__["RegisterPageComponent"],
-                _pages_chat_page_chat_page_component__WEBPACK_IMPORTED_MODULE_11__["ChatPageComponent"]
+                _app_component__WEBPACK_IMPORTED_MODULE_7__["AppComponent"],
+                _partials_test_test_component__WEBPACK_IMPORTED_MODULE_8__["TestComponent"],
+                _pages_home_page_home_page_component__WEBPACK_IMPORTED_MODULE_9__["HomePageComponent"],
+                _pages_login_page_login_page_component__WEBPACK_IMPORTED_MODULE_10__["LoginPageComponent"],
+                _pages_register_page_register_page_component__WEBPACK_IMPORTED_MODULE_11__["RegisterPageComponent"],
+                _pages_chat_page_chat_page_component__WEBPACK_IMPORTED_MODULE_12__["ChatPageComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
@@ -138,8 +150,8 @@ var AppModule = /** @class */ (function () {
                 _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpClientModule"],
                 _app_router__WEBPACK_IMPORTED_MODULE_5__["AppRouter"]
             ],
-            providers: [],
-            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_6__["AppComponent"]]
+            providers: [angular2_cookie_services_cookies_service__WEBPACK_IMPORTED_MODULE_6__["CookieService"]],
+            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_7__["AppComponent"]]
         })
     ], AppModule);
     return AppModule;
@@ -356,7 +368,7 @@ var LoginPageComponent = /** @class */ (function () {
     LoginPageComponent.prototype.loginUser = function () {
         this.authService
             .login(this.loginData)
-            .then(function (apiResponse) { return console.log(apiResponse); })
+            .then(function () { return window.location.href = '/'; })
             .catch(function (apiResponse) { return console.error(apiResponse); });
     };
     LoginPageComponent.prototype.ngOnInit = function () { };
@@ -518,12 +530,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var angular2_cookie_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! angular2-cookie/core */ "./node_modules/angular2-cookie/core.js");
+/* harmony import */ var angular2_cookie_core__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(angular2_cookie_core__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
 var AuthService = /** @class */ (function () {
-    function AuthService(http) {
+    function AuthService(http, _cookieService) {
         this.http = http;
+        this._cookieService = _cookieService;
         // variables
         this.apiUrl = 'http://localhost:9876/api/auth';
     }
@@ -555,14 +571,19 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.handleError = function (err) {
         return Promise.reject(err);
     };
+    // Delete the hetic-blog cookie
+    AuthService.prototype.logOut = function () {
+        this._cookieService.remove('hetic-blog');
+    };
+    // Check the hetic-blog cookie to see if the user is logged in
     AuthService.prototype.isLoggedIn = function () {
-        return $cookies.get('hetic-blog');
+        return this._cookieService.get('hetic-blog') ? true : false;
     };
     AuthService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
             providedIn: 'root'
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"], angular2_cookie_core__WEBPACK_IMPORTED_MODULE_3__["CookieService"]])
     ], AuthService);
     return AuthService;
 }());

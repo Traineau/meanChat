@@ -20,7 +20,7 @@ export class LoginPageComponent implements OnInit {
   public loginUser(): void {
     this.authService
       .login(this.loginData)
-      .then(apiResponse => console.log(apiResponse))
+      .then(() => window.location.href = '/')
       .catch(apiResponse => console.error(apiResponse));
   }
 

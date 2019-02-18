@@ -33,10 +33,6 @@ Service definition
             })
         }));
     };
-
-    const isUserLoggedIn = () =>{
-
-    }
 //
 
 /*
