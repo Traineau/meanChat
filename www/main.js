@@ -41,7 +41,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header>\n  <p [innerHtml]=\"myStatus\"></p>\n  <nav>\n    <a routerLink=\"/\" >Home</a>\n    <a routerLink=\"/login\">Login</a>\n    <a routerLink=\"/register\">Register</a>\n    <a (click)=\"logOut()\">Déconnexion</a>\n  </nav>\n</header>\n  <main>\n    <router-outlet></router-outlet>\n  </main>"
+module.exports = "<header>\n  <p [innerHtml]=\"myStatus\"></p>\n  <nav>\n    <a routerLink=\"/\" >Home</a>\n    <a routerLink=\"/login\">Login</a>\n    <a routerLink=\"/register\">Register</a>\n    <a routerLink=\"/chat\">Chat</a>\n    <a (click)=\"logOut()\">Déconnexion</a>\n  </nav>\n</header>\n  <main>\n    <router-outlet></router-outlet>\n  </main>"
 
 /***/ }),
 
@@ -175,6 +175,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pages_home_page_home_page_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pages/home-page/home-page.component */ "./src/app/pages/home-page/home-page.component.ts");
 /* harmony import */ var _pages_register_page_register_page_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pages/register-page/register-page.component */ "./src/app/pages/register-page/register-page.component.ts");
 /* harmony import */ var _pages_login_page_login_page_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pages/login-page/login-page.component */ "./src/app/pages/login-page/login-page.component.ts");
+/* harmony import */ var _pages_chat_page_chat_page_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pages/chat-page/chat-page.component */ "./src/app/pages/chat-page/chat-page.component.ts");
+
 
 
 
@@ -195,6 +197,9 @@ var routes = [
     {
         path: 'login',
         component: _pages_login_page_login_page_component__WEBPACK_IMPORTED_MODULE_3__["LoginPageComponent"]
+    }, {
+        path: 'chat',
+        component: _pages_chat_page_chat_page_component__WEBPACK_IMPORTED_MODULE_4__["ChatPageComponent"],
     }
 ];
 //
