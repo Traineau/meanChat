@@ -1,0 +1,23 @@
+<!--
+  Data-binding CTRL => VUE : [...]
+-->
+
+<base href="/">
+
+<h1 [innerHtml]="myTitle"></h1>
+
+<p>Register page</p>
+
+<!--
+  Data-binding VUE => CTRL : (...)
+  -->
+
+<form action="" (submit)="formSubmit()">
+<!--
+    Data-binding CTRL <=> VUE : [(...)]
+  -->
+  <input type="text" name="name" placeholder="name" [(ngModel)]="formData.name">
+  <input type="email" name="email" placeholder="email" [(ngModel)]="formData.email">
+  <input type="password" name="password" placeholder="password" [(ngModel)]="formData.password">
+  <button type="submit">Register</button>
+</form>

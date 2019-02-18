@@ -1,0 +1,15 @@
+<!--
+  Data-binding CTRL => VUE : [...]
+-->
+
+<base href="/">
+
+<h1 [innerHtml]="myTitle"></h1>
+
+<p>Login page</p>
+
+<form (submit)="loginUser()">
+  <input type="email" name="email" placeholder="email" [(ngModel)]="loginData.email">
+  <input type="password" name=password placeholder="password" [(ngModel)]="loginData.password">
+  <button type="submit">Login</button>
+</form>
