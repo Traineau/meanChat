@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy  } from '@angular/core';
 import PouchDB from 'pouchdb';
 import PouchFind from 'pouchdb-find';
 PouchDB.plugin(PouchFind);
@@ -6,7 +6,8 @@ PouchDB.plugin(PouchFind);
 @Component({
   selector: 'app-chat-page',
   templateUrl: './chat-page.component.html',
-  styleUrls: ['./chat-page.component.css']
+  styleUrls: ['./chat-page.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class ChatPageComponent implements OnInit {
   private db: any;
@@ -37,6 +38,10 @@ export class ChatPageComponent implements OnInit {
     this.db.sync(remoteDb, options);
   }
 
+  ionViewDidLoad(){
+    
+  }
+
   // A l'initialisation du composent
   ngOnInit() {
     // On recupere les données locales
@@ -58,14 +63,14 @@ export class ChatPageComponent implements OnInit {
           });
 
         // Parsing des resultats dans une map
-        result.rows.map(row => {
+        /*result.rows.map(row => {
           console.log(row.doc);
-          // Push des données dans notrez variable message
+          // Push des données dans notre variable message
           this.messages.push({
             author: row.doc.name,
             content: row.doc.content
           })
-        });
+        });*/
       });
   }
 
@@ -77,13 +82,14 @@ export class ChatPageComponent implements OnInit {
       name: 'David', // TODO : Recuperer le pseudo du mec via son token
       content: 'yo' // TODO : Recuperer le message tapé
     });
-
-    // Envoie des données
-    this.db.replicate.to('http://127.0.0.1:5984/node-chat');
   }
 
   // Actualisation du DOM
   public handleChange(change){
-    console.log(change);
+    console.log(change.doc);
+    this.messages.push({
+      author: change.doc.name,
+      content: change.doc.content
+    })
   }
 }

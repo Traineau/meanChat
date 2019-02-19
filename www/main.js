@@ -272,6 +272,8 @@ var ChatPageComponent = /** @class */ (function () {
         // Syncronisation des bases de données remote et client
         this.db.sync(remoteDb, options);
     }
+    ChatPageComponent.prototype.ionViewDidLoad = function () {
+    };
     // A l'initialisation du composent
     ChatPageComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -293,14 +295,14 @@ var ChatPageComponent = /** @class */ (function () {
                 _this.handleChange(change);
             });
             // Parsing des resultats dans une map
-            result.rows.map(function (row) {
-                console.log(row.doc);
-                // Push des données dans notrez variable message
-                _this.messages.push({
-                    author: row.doc.name,
-                    content: row.doc.content
-                });
-            });
+            /*result.rows.map(row => {
+              console.log(row.doc);
+              // Push des données dans notre variable message
+              this.messages.push({
+                author: row.doc.name,
+                content: row.doc.content
+              })
+            });*/
         });
     };
     // Pour chaque nouveau message
@@ -311,17 +313,20 @@ var ChatPageComponent = /** @class */ (function () {
             name: 'David',
             content: 'yo' // TODO : Recuperer le message tapé
         });
-        // Envoie des données
-        this.db.replicate.to('http://127.0.0.1:5984/node-chat');
     };
     // Actualisation du DOM
     ChatPageComponent.prototype.handleChange = function (change) {
-        console.log(change);
+        console.log(change.doc);
+        this.messages.push({
+            author: change.doc.name,
+            content: change.doc.content
+        });
     };
     ChatPageComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-chat-page',
             template: __webpack_require__(/*! ./chat-page.component.html */ "./src/app/pages/chat-page/chat-page.component.html"),
+            changeDetection: _angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectionStrategy"].Default,
             styles: [__webpack_require__(/*! ./chat-page.component.css */ "./src/app/pages/chat-page/chat-page.component.css")]
         }),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
