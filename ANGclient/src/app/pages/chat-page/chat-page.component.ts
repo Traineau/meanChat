@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Injectable, EventEmitter } from '@angular/core';
 import PouchDB from 'pouchdb';
 import PouchFind from 'pouchdb-find';
 PouchDB.plugin(PouchFind);
@@ -12,61 +11,79 @@ PouchDB.plugin(PouchFind);
 export class ChatPageComponent implements OnInit {
   private db: any;
   private isInstantiated: boolean;
-  private listener: EventEmitter<any> = new EventEmitter();
   public messages: {
-    author: string;
-    content: string;
-  }[];
+    author: String,
+    content: String
+  }[] = [];
 
   constructor() {
     if (!this.isInstantiated) {
+      // Base de données coté client
       this.db = new PouchDB('node-chat');
       this.isInstantiated = true;
-
-      this.messages = [
-        {
-          author: 'NodeBot',
-          content: 'Bonjour et bienvenue dans ce chat'
-        },
-        {
-          author: 'NodeBot',
-          content:
-            'Vous pouvez envoyer des messages qui apparaitront directement pour tout utilisateur connecté'
-        },
-        {
-          author: 'NodeBot',
-          content: 'Ce chat a été fait avec angular, NodeJS et pouchDB'
-        }
-      ];
     }
 
-    this.db.changes().on('change', function() {
-      this.db.allDocs({ include_docs: true }, function(err, docs) {
-        if (err) {
-          return console.log(err);
-        } else {
-          console.log(docs.rows);
-          /*
-          this.messages += [
-            {
-              author: (docs.rows[0].doc.name),
-              content: (docs.rows[0].doc.content)
-            }
-          ];*/
-        }
-      });
-    });
+    // Options de synchronisation des bases de données
+    const options = {
+      live: true,
+      retry: true,
+      continuous: true
+    };
+
+    // Base de données serveur unique
+    const remoteDb = 'http://localhost:5984/node-chat';
+
+    // Syncronisation des bases de données remote et client
+    this.db.sync(remoteDb, options);
   }
 
+  // A l'initialisation du composent
+  ngOnInit() {
+    // On recupere les données locales
+    this.db
+      .allDocs({
+        include_docs: true // Recuperation du contenu des docs
+      })
+      .then(result => {
+        // Si ya un changement en local
+        this.db
+          .changes({
+            live: true,
+            since: 'now',
+            include_docs: true
+          })
+          .on('change', change => {
+            // Trigger la fonction handleChange pour actualiser le dom
+            this.handleChange(change);
+          });
+
+        // Parsing des resultats dans une map
+        result.rows.map(row => {
+          console.log(row.doc);
+          // Push des données dans notrez variable message
+          this.messages.push({
+            author: row.doc.name,
+            content: row.doc.content
+          })
+        });
+      });
+  }
+
+  // Pour chaque nouveau message
   public newMessage() {
+    // On crée un nouveau document en local (qui va se syncroniser avec la bdd serveur)
     this.db.put({
       _id: Date.now().toString(),
       name: 'David', // TODO : Recuperer le pseudo du mec via son token
       content: 'yo' // TODO : Recuperer le message tapé
     });
 
-    this.db.replicate.to('http://127.0.0.1:5984/node-chat', true);
+    // Envoie des données
+    this.db.replicate.to('http://127.0.0.1:5984/node-chat');
   }
 
-  ngOnInit() {}
+  // Actualisation du DOM
+  public handleChange(change){
+    console.log(change);
+  }
 }

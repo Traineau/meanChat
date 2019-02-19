@@ -252,56 +252,72 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 pouchdb__WEBPACK_IMPORTED_MODULE_2__["default"].plugin(pouchdb_find__WEBPACK_IMPORTED_MODULE_3__["default"]);
 var ChatPageComponent = /** @class */ (function () {
     function ChatPageComponent() {
-        this.listener = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
+        this.messages = [];
         if (!this.isInstantiated) {
+            // Base de données coté client
             this.db = new pouchdb__WEBPACK_IMPORTED_MODULE_2__["default"]('node-chat');
             this.isInstantiated = true;
-            this.messages = [
-                {
-                    author: 'NodeBot',
-                    content: 'Bonjour et bienvenue dans ce chat'
-                },
-                {
-                    author: 'NodeBot',
-                    content: 'Vous pouvez envoyer des messages qui apparaitront directement pour tout utilisateur connecté'
-                },
-                {
-                    author: 'NodeBot',
-                    content: 'Ce chat a été fait avec angular, NodeJS et pouchDB'
-                }
-            ];
         }
-        this.db.changes().on('change', function () {
-            this.db.allDocs({ include_docs: true }, function (err, docs) {
-                if (err) {
-                    return console.log(err);
-                }
-                else {
-                    console.log(docs.rows);
-                    /*
-                    this.messages += [
-                      {
-                        author: (docs.rows[0].doc.name),
-                        content: (docs.rows[0].doc.content)
-                      }
-                    ];*/
-                }
+        // Options de synchronisation des bases de données
+        var options = {
+            live: true,
+            retry: true,
+            continuous: true
+        };
+        // Base de données serveur unique
+        var remoteDb = 'http://localhost:5984/node-chat';
+        // Syncronisation des bases de données remote et client
+        this.db.sync(remoteDb, options);
+    }
+    // A l'initialisation du composent
+    ChatPageComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        // On recupere les données locales
+        this.db
+            .allDocs({
+            include_docs: true // Recuperation du contenu des docs
+        })
+            .then(function (result) {
+            // Si ya un changement en local
+            _this.db
+                .changes({
+                live: true,
+                since: 'now',
+                include_docs: true
+            })
+                .on('change', function (change) {
+                // Trigger la fonction handleChange pour actualiser le dom
+                _this.handleChange(change);
+            });
+            // Parsing des resultats dans une map
+            result.rows.map(function (row) {
+                console.log(row.doc);
+                // Push des données dans notrez variable message
+                _this.messages.push({
+                    author: row.doc.name,
+                    content: row.doc.content
+                });
             });
         });
-    }
+    };
+    // Pour chaque nouveau message
     ChatPageComponent.prototype.newMessage = function () {
+        // On crée un nouveau document en local (qui va se syncroniser avec la bdd serveur)
         this.db.put({
             _id: Date.now().toString(),
             name: 'David',
             content: 'yo' // TODO : Recuperer le message tapé
         });
-        this.db.replicate.to('http://127.0.0.1:5984/node-chat', true);
+        // Envoie des données
+        this.db.replicate.to('http://127.0.0.1:5984/node-chat');
     };
-    ChatPageComponent.prototype.ngOnInit = function () { };
+    // Actualisation du DOM
+    ChatPageComponent.prototype.handleChange = function (change) {
+        console.log(change);
+    };
     ChatPageComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-chat-page',
