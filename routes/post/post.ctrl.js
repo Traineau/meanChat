@@ -15,7 +15,7 @@ Méthodes CRUD
     const createItem = (body) => {
         return new Promise((resolve, reject) => {
             // Récupérer l'id de l'auteur
-            body.author = 'fuu'
+            body.author = 'fuuf'
 
             PostModel.create(body)
             .then(mongoResponse => resolve(mongoResponse))

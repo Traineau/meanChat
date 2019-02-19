@@ -13,11 +13,11 @@ import { AuthService } from './services/auth/auth.service';
 // Export
 export class AppComponent {
   public myTitle: String;
-  public myStatus: String;
+  public myStatus: Boolean;
 
   constructor(private authService : AuthService){
     this.myTitle = 'NodeJs Chat';
-    this.myStatus = authService.isLoggedIn() ? 'Connecté' : 'Deconnecté';
+    this.myStatus = authService.isLoggedIn() ? true : false;
   }
 
   public logOut(){
@@ -25,6 +25,6 @@ export class AppComponent {
     // Delete cookie with authService's function
     this.authService.logOut();
     // Redirection
-    window.location.href = '/';
+    window.location.href = '/chat';
   }
 }

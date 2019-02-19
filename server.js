@@ -13,8 +13,10 @@ Import
     const bodyParser = require('body-parser');
     //=> Gestion des cookies
     const cookieParser = require('cookie-parser');
-    //=> Connexion BDD
-    const dbConnect = require('./services/mongodb.serv')
+    //=> Connexion BDD mongo
+    const mongoDbConnect = require('./services/mongodb.serv');
+    // => Connexion bdd couch
+    const couchDbConnect = require('./services/couchdb.serv');
     //=> Router
     const mainRouter = require('./routes/main.router');
 //
@@ -52,8 +54,8 @@ Configuration
         }
 
         launch(){
-            // Connecter la BDD
-            dbConnect()
+            // Connecter la BDD mongo
+            mongoDbConnect()
             .then( db => {
                 // Start server
                 server.listen( port, () => {
@@ -64,10 +66,18 @@ Configuration
                 });
             })
             .catch( err => console.log(`Error MongoDB ${err}`) );
+
+            // Connecter la BDD couch
+            couchDbConnect()
+            .then(db => {
+                console.log({
+                    couchDb: `couchDb is connected ${db}!`
+                });
+            });
         }
     }
-//
 
+//
 /*
 Start server
 */

@@ -41,7 +41,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header>\n  <p [innerHtml]=\"myStatus\"></p>\n  <nav>\n    <a routerLink=\"/\" >Home</a>\n    <a routerLink=\"/login\">Login</a>\n    <a routerLink=\"/register\">Register</a>\n    <a routerLink=\"/chat\">Chat</a>\n    <a (click)=\"logOut()\">Déconnexion</a>\n  </nav>\n</header>\n  <main>\n    <router-outlet></router-outlet>\n  </main>"
+module.exports = "<header>\n  <nav class=\"nav-bar\" *ngIf=\"myStatus == false\">\n    <a class=\"nav-link\" routerLink=\"/\">Home</a>\n    <a class=\"nav-link\" routerLink=\"/login\">Login</a>\n    <a class=\"nav-link\" routerLink=\"/register\">Register</a>\n    <a class=\"nav-link\" routerLink=\"/chat\">Chat</a>\n  </nav>\n\n  <nav class=\"nav-bar\" *ngIf=\"myStatus == true\">\n    <a class=\"nav-link\" routerLink=\"/\">Home</a>\n    <a class=\"nav-link\" routerLink=\"/chat\">Chat</a>\n    <button class=\"logout-button\" (click)=\"logOut()\">Déconnexion</button>\n  </nav>\n\n</header>\n<main>\n  <router-outlet></router-outlet>\n</main>\n"
 
 /***/ }),
 
@@ -67,14 +67,14 @@ var AppComponent = /** @class */ (function () {
     function AppComponent(authService) {
         this.authService = authService;
         this.myTitle = 'NodeJs Chat';
-        this.myStatus = authService.isLoggedIn() ? 'Connecté' : 'Deconnecté';
+        this.myStatus = authService.isLoggedIn() ? true : false;
     }
     AppComponent.prototype.logOut = function () {
         console.log("Deconexion");
         // Delete cookie with authService's function
         this.authService.logOut();
         // Redirection
-        window.location.href = '/';
+        window.location.href = '/chat';
     };
     AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -219,7 +219,7 @@ var AppRouter = _angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"].for
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL3BhZ2VzL2NoYXQtcGFnZS9jaGF0LXBhZ2UuY29tcG9uZW50LmNzcyJ9 */"
+module.exports = "#messages{\r\n    min-height: 150px;\r\n    background-color: rgba(110, 103, 110, 0.164);\r\n}\r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvcGFnZXMvY2hhdC1wYWdlL2NoYXQtcGFnZS5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0lBQ0ksaUJBQWlCO0lBQ2pCLDRDQUE0QztBQUNoRCIsImZpbGUiOiJzcmMvYXBwL3BhZ2VzL2NoYXQtcGFnZS9jaGF0LXBhZ2UuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIiNtZXNzYWdlc3tcclxuICAgIG1pbi1oZWlnaHQ6IDE1MHB4O1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiYSgxMTAsIDEwMywgMTEwLCAwLjE2NCk7XHJcbn0iXX0= */"
 
 /***/ }),
 
@@ -230,7 +230,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<p>\n  chat-page works!\n</p>\n"
+module.exports = "<div>\n  <br />\n  <div class=\"chat\">\n    <h1>Start Chatting</h1>\n\n    <table class=\"table\">\n        <tr>\n          <th>Author</th>\n          <th>Content</th>\n        </tr>\n  \n        <tr *ngFor=\"let message of messages\">\n          <td>{{message.author}}</td>\n          <td>{{message.content}}</td>\n        </tr>\n      </table>\n      \n    <br />\n\n    <textarea id=\"txtMessage\" placeholder=\"Message\"></textarea><br />\n\n    <button id=\"send\" (click)=\"newMessage()\">Send</button>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -246,13 +246,62 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChatPageComponent", function() { return ChatPageComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var pouchdb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! pouchdb */ "./node_modules/pouchdb/lib/index-browser.es.js");
+/* harmony import */ var pouchdb_find__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! pouchdb-find */ "./node_modules/pouchdb-find/lib/index-browser.es.js");
 
 
+
+
+
+pouchdb__WEBPACK_IMPORTED_MODULE_2__["default"].plugin(pouchdb_find__WEBPACK_IMPORTED_MODULE_3__["default"]);
 var ChatPageComponent = /** @class */ (function () {
     function ChatPageComponent() {
+        this.listener = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
+        if (!this.isInstantiated) {
+            this.db = new pouchdb__WEBPACK_IMPORTED_MODULE_2__["default"]('node-chat');
+            this.isInstantiated = true;
+            this.messages = [
+                {
+                    author: 'NodeBot',
+                    content: 'Bonjour et bienvenue dans ce chat'
+                },
+                {
+                    author: 'NodeBot',
+                    content: 'Vous pouvez envoyer des messages qui apparaitront directement pour tout utilisateur connecté'
+                },
+                {
+                    author: 'NodeBot',
+                    content: 'Ce chat a été fait avec angular, NodeJS et pouchDB'
+                }
+            ];
+        }
+        this.db.changes().on('change', function () {
+            this.db.allDocs({ include_docs: true }, function (err, docs) {
+                if (err) {
+                    return console.log(err);
+                }
+                else {
+                    console.log(docs.rows);
+                    /*
+                    this.messages += [
+                      {
+                        author: (docs.rows[0].doc.name),
+                        content: (docs.rows[0].doc.content)
+                      }
+                    ];*/
+                }
+            });
+        });
     }
-    ChatPageComponent.prototype.ngOnInit = function () {
+    ChatPageComponent.prototype.newMessage = function () {
+        this.db.put({
+            _id: Date.now().toString(),
+            name: 'David',
+            content: 'yo' // TODO : Recuperer le message tapé
+        });
+        this.db.replicate.to('http://127.0.0.1:5984/node-chat', true);
     };
+    ChatPageComponent.prototype.ngOnInit = function () { };
     ChatPageComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-chat-page',

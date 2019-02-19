@@ -5770,6 +5770,9 @@ __webpack_require__.r(__webpack_exports__);
  * Zone JS is required by default for Angular itself.
  */
  // Included with Angular CLI.
+window.global = window;
+window.process = {};
+window.process.nextTick = setTimeout;
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */

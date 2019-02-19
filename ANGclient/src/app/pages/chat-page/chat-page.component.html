@@ -1,3 +1,24 @@
-<p>
-  chat-page works!
-</p>
+<div>
+  <br />
+  <div class="chat">
+    <h1>Start Chatting</h1>
+
+    <table class="table">
+        <tr>
+          <th>Author</th>
+          <th>Content</th>
+        </tr>
+  
+        <tr *ngFor="let message of messages">
+          <td>{{message.author}}</td>
+          <td>{{message.content}}</td>
+        </tr>
+      </table>
+      
+    <br />
+
+    <textarea id="txtMessage" placeholder="Message"></textarea><br />
+
+    <button id="send" (click)="newMessage()">Send</button>
+  </div>
+</div>

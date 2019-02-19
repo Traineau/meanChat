@@ -1,21 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 
 html{
-    background-color: #9b4dca;
+    background-color: #9a4dca67;
     height: 100%;
 }
 
 body{
-    padding-top: 15px;
     max-width: 860px;
     margin: auto;
-    height: 100%;
     margin-bottom: 0;
     background-color: white;
     text-align: center;
     box-shadow: 8px 8px 15px #000000 ;
 }
 
-nav a {
-    width: 33%;
+.nav-link{
+    font-size: 25px;
+    color: white;
+}
+
+.nav-bar{
+    background-color: rgb(0, 0, 0)
 }
