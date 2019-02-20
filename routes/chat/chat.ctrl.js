@@ -5,7 +5,6 @@ Imports
     const bcrypt = require('bcryptjs');
     
     // Inner
-    const PostModel = require('../../models/post.model');
 //
 
 
@@ -13,26 +12,27 @@ Imports
 Méthodes CRUD
 */
     const createItem = (body) => {
-        return new Promise((resolve, reject) => {
-            // Récupérer l'id de l'auteur
-            body.author = 'fuuf'
-
-            PostModel.create(body)
-            .then(mongoResponse => resolve(mongoResponse))
-            .catch(mongoResponse => reject(mongoResponse))
-        })
+        return new Promise( (resolve, reject) => {
+            
+        });
     };
 
     const readItem = () => {
-
+        return new Promise( (resolve, reject) => {
+            
+        });
     }
 
     const updateItem = () => {
-
+        return new Promise( (resolve, reject) => {
+            
+        });
     }
 
     const deleteItem = () => {
-
+        return new Promise( (resolve, reject) => {
+            
+        });
     }
 //
 

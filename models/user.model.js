@@ -11,9 +11,9 @@ Import
 Config
 */
     const userSchema = new Schema({
+        name: String,
         email: String,
-        password: String,
-        name: String
+        password: String
     }); 
 
     // Méthode

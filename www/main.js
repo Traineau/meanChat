@@ -230,7 +230,7 @@ module.exports = "#messages{\r\n    min-height: 150px;\r\n    background-color: 
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n  <br />\n  <div class=\"chat\">\n    <h1>Start Chatting</h1>\n\n    <table class=\"table\">\n        <tr>\n          <th>Author</th>\n          <th>Content</th>\n        </tr>\n  \n        <tr *ngFor=\"let message of messages\">\n          <td>{{message.author}}</td>\n          <td>{{message.content}}</td>\n        </tr>\n      </table>\n      \n    <br />\n\n    <textarea id=\"txtMessage\" placeholder=\"Message\"></textarea><br />\n\n    <button id=\"send\" (click)=\"newMessage()\">Send</button>\n  </div>\n</div>\n"
+module.exports = "<div>\n  <br />\n  <div class=\"chat\">\n    <h1>Start Chatting</h1>\n\n    <table class=\"table\">\n        <tr>\n          <th>Author</th>\n          <th>Content</th>\n        </tr>\n  \n        <tr *ngFor=\"let message of messages\">\n          <td>{{message.author}}</td>\n          <td>{{message.content}}</td>\n        </tr>\n      </table>\n      \n    <br />\n\n    <textarea id=\"txtMessage\" placeholder=\"Message\" [(ngModel)]=\"messageInput\"></textarea><br />\n\n    <button id=\"send\" (click)=\"newMessage()\">Send</button>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -254,7 +254,9 @@ __webpack_require__.r(__webpack_exports__);
 
 pouchdb__WEBPACK_IMPORTED_MODULE_2__["default"].plugin(pouchdb_find__WEBPACK_IMPORTED_MODULE_3__["default"]);
 var ChatPageComponent = /** @class */ (function () {
-    function ChatPageComponent() {
+    function ChatPageComponent(detectorRef, ngZone) {
+        this.detectorRef = detectorRef;
+        this.ngZone = ngZone;
         this.messages = [];
         if (!this.isInstantiated) {
             // Base de données coté client
@@ -271,9 +273,8 @@ var ChatPageComponent = /** @class */ (function () {
         var remoteDb = 'http://localhost:5984/node-chat';
         // Syncronisation des bases de données remote et client
         this.db.sync(remoteDb, options);
+        this.messageInput = null;
     }
-    ChatPageComponent.prototype.ionViewDidLoad = function () {
-    };
     // A l'initialisation du composent
     ChatPageComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -291,18 +292,18 @@ var ChatPageComponent = /** @class */ (function () {
                 include_docs: true
             })
                 .on('change', function (change) {
-                // Trigger la fonction handleChange pour actualiser le dom
+                // Trigger la fonction handleChange pour actualiser le dom quand il y a un changement
                 _this.handleChange(change);
             });
-            // Parsing des resultats dans une map
-            /*result.rows.map(row => {
-              console.log(row.doc);
-              // Push des données dans notre variable message
-              this.messages.push({
-                author: row.doc.name,
-                content: row.doc.content
-              })
-            });*/
+            // Actualisation du début
+            result.rows.map(function (row) {
+                // Push des données dans notre variable message
+                _this.messages.push({
+                    _id: row.doc._id,
+                    author: row.doc.name,
+                    content: row.doc.content
+                });
+            });
         });
     };
     // Pour chaque nouveau message
@@ -311,15 +312,39 @@ var ChatPageComponent = /** @class */ (function () {
         this.db.put({
             _id: Date.now().toString(),
             name: 'David',
-            content: 'yo' // TODO : Recuperer le message tapé
+            content: this.messageInput
         });
+        this.messageInput = "";
     };
     // Actualisation du DOM
     ChatPageComponent.prototype.handleChange = function (change) {
-        console.log(change.doc);
-        this.messages.push({
-            author: change.doc.name,
-            content: change.doc.content
+        var _this = this;
+        this.ngZone.run(function () {
+            var changedDoc = null;
+            var changedIndex = null;
+            _this.messages.forEach(function (doc, index) {
+                if (doc._id === change._id) {
+                    changedDoc = doc;
+                    changedIndex = index;
+                }
+            });
+            if (change.deleted) {
+                _this.messages.splice(changedIndex, 1);
+            }
+            else {
+                if (changedDoc) {
+                    _this.messages[changedIndex]._id = change.doc._id;
+                    _this.messages[changedIndex].author = change.doc.name;
+                    _this.messages[changedIndex].content = change.doc.content;
+                }
+                else {
+                    _this.messages.push({
+                        _id: change.doc._id,
+                        author: change.doc.name,
+                        content: change.doc.content
+                    });
+                }
+            }
         });
     };
     ChatPageComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -329,7 +354,7 @@ var ChatPageComponent = /** @class */ (function () {
             changeDetection: _angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectionStrategy"].Default,
             styles: [__webpack_require__(/*! ./chat-page.component.css */ "./src/app/pages/chat-page/chat-page.component.css")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"]])
     ], ChatPageComponent);
     return ChatPageComponent;
 }());
@@ -623,7 +648,7 @@ var AuthService = /** @class */ (function () {
         var myHeader = new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]();
         myHeader.append('Content-Type', 'application/json');
         // Créer la requête
-        return this.http.post("http://localhost:9876/api/user", data, { headers: myHeader })
+        return this.http.post(this.apiUrl + "/register", data, { headers: myHeader })
             .toPromise()
             .then(this.getData)
             .catch(this.handleError);
@@ -648,11 +673,11 @@ var AuthService = /** @class */ (function () {
     };
     // Delete the hetic-blog cookie
     AuthService.prototype.logOut = function () {
-        this._cookieService.remove('hetic-blog');
+        this._cookieService.remove('my-token');
     };
     // Check the hetic-blog cookie to see if the user is logged in
     AuthService.prototype.isLoggedIn = function () {
-        return this._cookieService.get('hetic-blog') ? true : false;
+        return this._cookieService.get('my-token') ? true : false;
     };
     AuthService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({

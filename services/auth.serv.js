@@ -11,7 +11,7 @@ Service definition
     // Extract token from cookie
     const cookieExtractor = (req) => {
         let token = null;
-        if (req && req.cookies) token = req.cookies['hetic-blog'];
+        if (req && req.cookies) token = req.cookies['my-token'];
         return token;
     };
 

@@ -19,7 +19,7 @@ export class AuthService {
     myHeader.append('Content-Type', 'application/json');
 
     // Créer la requête
-    return this.http.post( `http://localhost:9876/api/user`, data, { headers: myHeader } )
+    return this.http.post( `${this.apiUrl}/register`, data, { headers: myHeader } )
     .toPromise()
     .then(this.getData)
     .catch(this.handleError);
@@ -49,11 +49,11 @@ export class AuthService {
 
   // Delete the hetic-blog cookie
   public logOut(){
-    this._cookieService.remove('hetic-blog');
+    this._cookieService.remove('my-token');
   }
 
   // Check the hetic-blog cookie to see if the user is logged in
   public isLoggedIn(){
-    return this._cookieService.get('hetic-blog') ? true : false;
+    return this._cookieService.get('my-token') ? true : false;
   }
 }

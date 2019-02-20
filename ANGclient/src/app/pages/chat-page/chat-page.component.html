@@ -17,7 +17,7 @@
       
     <br />
 
-    <textarea id="txtMessage" placeholder="Message"></textarea><br />
+    <textarea id="txtMessage" placeholder="Message" [(ngModel)]="messageInput"></textarea><br />
 
     <button id="send" (click)="newMessage()">Send</button>
   </div>

@@ -2,7 +2,7 @@
 Imports
 */
     // Node
-    const bcrypt = require('bcrypt');
+    const bcrypt = require('bcryptjs');
     
     // Inner
     const UserModel = require('../../models/user.model');
