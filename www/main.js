@@ -41,7 +41,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header>\n  <nav class=\"nav-bar\" *ngIf=\"myStatus == false\">\n    <a class=\"nav-link\" routerLink=\"/\">Home</a>\n    <a class=\"nav-link\" routerLink=\"/login\">Login</a>\n    <a class=\"nav-link\" routerLink=\"/register\">Register</a>\n    <a class=\"nav-link\" routerLink=\"/chat\">Chat</a>\n  </nav>\n\n  <nav class=\"nav-bar\" *ngIf=\"myStatus == true\">\n    <a class=\"nav-link\" routerLink=\"/\">Home</a>\n    <a class=\"nav-link\" routerLink=\"/chat\">Chat</a>\n    <button class=\"logout-button\" (click)=\"logOut()\">Déconnexion</button>\n  </nav>\n\n</header>\n<main>\n  <router-outlet></router-outlet>\n</main>\n"
+module.exports = "<header>\n  <nav class=\"nav-bar\">\n    <a class=\"nav-link\" routerLink=\"/\">Home</a>\n    <a class=\"nav-link\" routerLink=\"/login\">Login</a>\n    <a class=\"nav-link\" routerLink=\"/register\">Register</a>\n    <a class=\"nav-link\" routerLink=\"/chat\">Chat</a>\n    <button class=\"logout-button\" (click)=\"logOut()\">Déconnexion</button>\n  </nav>\n</header>\n<main>\n  <router-outlet></router-outlet>\n</main>\n"
 
 /***/ }),
 
@@ -67,7 +67,6 @@ var AppComponent = /** @class */ (function () {
     function AppComponent(authService) {
         this.authService = authService;
         this.myTitle = 'NodeJs Chat';
-        this.myStatus = authService.isLoggedIn() ? true : false;
     }
     AppComponent.prototype.logOut = function () {
         console.log("Deconexion");
@@ -248,16 +247,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var pouchdb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! pouchdb */ "./node_modules/pouchdb/lib/index-browser.es.js");
 /* harmony import */ var pouchdb_find__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! pouchdb-find */ "./node_modules/pouchdb-find/lib/index-browser.es.js");
+/* harmony import */ var _services_auth_auth_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../services/auth/auth.service */ "./src/app/services/auth/auth.service.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+
+
 
 
 
 
 pouchdb__WEBPACK_IMPORTED_MODULE_2__["default"].plugin(pouchdb_find__WEBPACK_IMPORTED_MODULE_3__["default"]);
 var ChatPageComponent = /** @class */ (function () {
-    function ChatPageComponent(detectorRef, ngZone) {
-        this.detectorRef = detectorRef;
+    function ChatPageComponent(router, ngZone, authService) {
+        this.router = router;
         this.ngZone = ngZone;
+        this.authService = authService;
         this.messages = [];
+        // Redirection sécurisée de manière parfaite
+        if (authService.isLoggedIn() == false) {
+            this.router.navigate(['/']);
+        }
         if (!this.isInstantiated) {
             // Base de données coté client
             this.db = new pouchdb__WEBPACK_IMPORTED_MODULE_2__["default"]('node-chat');
@@ -311,7 +319,7 @@ var ChatPageComponent = /** @class */ (function () {
         // On crée un nouveau document en local (qui va se syncroniser avec la bdd serveur)
         this.db.put({
             _id: Date.now().toString(),
-            name: 'David',
+            name: this.authService.userName,
             content: this.messageInput
         });
         this.messageInput = "";
@@ -354,7 +362,7 @@ var ChatPageComponent = /** @class */ (function () {
             changeDetection: _angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectionStrategy"].Default,
             styles: [__webpack_require__(/*! ./chat-page.component.css */ "./src/app/pages/chat-page/chat-page.component.css")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"], _services_auth_auth_service__WEBPACK_IMPORTED_MODULE_4__["AuthService"]])
     ], ChatPageComponent);
     return ChatPageComponent;
 }());
@@ -454,11 +462,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _services_auth_auth_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/auth/auth.service */ "./src/app/services/auth/auth.service.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+
 
 
 
 var LoginPageComponent = /** @class */ (function () {
-    function LoginPageComponent(authService) {
+    function LoginPageComponent(router, authService) {
+        this.router = router;
         this.authService = authService;
         this.loginData = {
             email: undefined,
@@ -466,10 +477,13 @@ var LoginPageComponent = /** @class */ (function () {
         };
     }
     LoginPageComponent.prototype.loginUser = function () {
+        var _this = this;
         this.authService
             .login(this.loginData)
-            .then(function () { return window.location.href = '/'; })
+            // Stocke le nom de l'utilisateur
+            .then(function (apiResponse) { return _this.authService.userName = apiResponse.data.name; })
             .catch(function (apiResponse) { return console.error(apiResponse); });
+        this.router.navigate(['/chat']);
     };
     LoginPageComponent.prototype.ngOnInit = function () { };
     LoginPageComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -478,7 +492,7 @@ var LoginPageComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./login-page.component.html */ "./src/app/pages/login-page/login-page.component.html"),
             styles: [__webpack_require__(/*! ./login-page.component.css */ "./src/app/pages/login-page/login-page.component.css")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_services_auth_auth_service__WEBPACK_IMPORTED_MODULE_2__["AuthService"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"], _services_auth_auth_service__WEBPACK_IMPORTED_MODULE_2__["AuthService"]])
     ], LoginPageComponent);
     return LoginPageComponent;
 }());
@@ -522,11 +536,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _services_auth_auth_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/auth/auth.service */ "./src/app/services/auth/auth.service.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+
 
 
 
 var RegisterPageComponent = /** @class */ (function () {
-    function RegisterPageComponent(authService) {
+    function RegisterPageComponent(router, authService) {
+        this.router = router;
         this.authService = authService;
         this.formData = {
             email: undefined,
@@ -543,6 +560,7 @@ var RegisterPageComponent = /** @class */ (function () {
                 .then(function (apiResponse) { return console.log(apiResponse); })
                 .catch(function (apiResponse) { return console.error(apiResponse); });
         }
+        this.router.navigate(['/login']);
     };
     RegisterPageComponent.prototype.ngOnInit = function () {
     };
@@ -552,7 +570,7 @@ var RegisterPageComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./register-page.component.html */ "./src/app/pages/register-page/register-page.component.html"),
             styles: [__webpack_require__(/*! ./register-page.component.css */ "./src/app/pages/register-page/register-page.component.css")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_services_auth_auth_service__WEBPACK_IMPORTED_MODULE_2__["AuthService"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"], _services_auth_auth_service__WEBPACK_IMPORTED_MODULE_2__["AuthService"]])
     ], RegisterPageComponent);
     return RegisterPageComponent;
 }());
@@ -640,6 +658,7 @@ var AuthService = /** @class */ (function () {
     function AuthService(http, _cookieService) {
         this.http = http;
         this._cookieService = _cookieService;
+        this.userName = '';
         // variables
         this.apiUrl = 'http://localhost:9876/api/auth';
     }
@@ -674,6 +693,7 @@ var AuthService = /** @class */ (function () {
     // Delete the hetic-blog cookie
     AuthService.prototype.logOut = function () {
         this._cookieService.remove('my-token');
+        this.userName = '';
     };
     // Check the hetic-blog cookie to see if the user is logged in
     AuthService.prototype.isLoggedIn = function () {

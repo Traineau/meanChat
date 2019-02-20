@@ -7,6 +7,8 @@ import {
 } from '@angular/core';
 import PouchDB from 'pouchdb';
 import PouchFind from 'pouchdb-find';
+import { AuthService } from "../../services/auth/auth.service";
+import {Router} from "@angular/router"
 PouchDB.plugin(PouchFind);
 
 @Component({
@@ -25,7 +27,12 @@ export class ChatPageComponent implements OnInit {
   }[] = [];
   public messageInput: String;
 
-  constructor(private detectorRef: ChangeDetectorRef, private ngZone: NgZone) {
+  constructor(private router: Router, private ngZone: NgZone, private authService: AuthService) {
+
+    // Redirection sécurisée de manière parfaite
+    if(authService.isLoggedIn() == false){
+      this.router.navigate(['/'])
+    }
     if (!this.isInstantiated) {
       // Base de données coté client
       this.db = new PouchDB('node-chat');
@@ -85,7 +92,7 @@ export class ChatPageComponent implements OnInit {
     // On crée un nouveau document en local (qui va se syncroniser avec la bdd serveur)
     this.db.put({
       _id: Date.now().toString(),
-      name: 'David', // TODO : Recuperer le pseudo du mec via son token
+      name: this.authService.userName, // TODO : Recuperer le pseudo du mec via son token
       content: this.messageInput
     });
 

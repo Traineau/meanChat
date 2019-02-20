@@ -58,6 +58,12 @@ Definition
                 }
             })
 
+            // Get
+            userRouter.get('/name', (req, res) => {
+
+            })
+
+
             // Update
             userRouter.put( '/', (req, res) => {
                 res.json( { msg: "Update user" } )

@@ -4,7 +4,7 @@ Import & config
 const { Router } = require('express');
 const chatRouter = Router({ mergeParams: true });
 const { sendBodyError, sendFieldsError, sendApiSuccessResponse, sendApiErrorResponse } = require('../../services/server.response');
-const { checkFields } = require('../../services/request.checker');
+const checkFields = require('../../services/request.checker');
 const { createItem, readItem, updateItem, deleteItem } = require('./chat.ctrl')
 //
 
@@ -22,7 +22,7 @@ class ChatRouterClass {
             // Error: no body present
             if (typeof req.body === 'undefined' || req.body === null) { return sendBodyError(res, 'No body data provided') }
             // Check fields in the body
-            const { miss, extra, ok } = checkFields(['name' , 'email', 'password'], req.body);
+            const { ok, extra, miss } = checkFields(['name' , 'email', 'password'], req.body);
             //=> Error: bad fields
             if (!ok) { return sendFieldsError(res, 'Bad fields provided', miss, extra) }
             // Request is OK

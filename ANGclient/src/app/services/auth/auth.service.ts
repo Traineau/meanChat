@@ -8,6 +8,8 @@ import { CookieService } from 'angular2-cookie/core';
 })
 export class AuthService {
 
+  public userName: String = '';
+
   // variables
   private apiUrl: String = 'http://localhost:9876/api/auth'
 
@@ -50,6 +52,7 @@ export class AuthService {
   // Delete the hetic-blog cookie
   public logOut(){
     this._cookieService.remove('my-token');
+    this.userName = '';
   }
 
   // Check the hetic-blog cookie to see if the user is logged in

@@ -1,17 +1,11 @@
 <header>
-  <nav class="nav-bar" *ngIf="myStatus == false">
+  <nav class="nav-bar">
     <a class="nav-link" routerLink="/">Home</a>
     <a class="nav-link" routerLink="/login">Login</a>
     <a class="nav-link" routerLink="/register">Register</a>
     <a class="nav-link" routerLink="/chat">Chat</a>
-  </nav>
-
-  <nav class="nav-bar" *ngIf="myStatus == true">
-    <a class="nav-link" routerLink="/">Home</a>
-    <a class="nav-link" routerLink="/chat">Chat</a>
     <button class="logout-button" (click)="logOut()">Déconnexion</button>
   </nav>
-
 </header>
 <main>
   <router-outlet></router-outlet>

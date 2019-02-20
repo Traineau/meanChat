@@ -57,23 +57,23 @@ Configuration
             // Connecter la BDD mongo
             mongoDbConnect()
             .then( db => {
-                // Start server
-                server.listen( port, () => {
-                    console.log({
-                        monngo: `BDD is connected ${db}!`,
-                        server: `Server listening on port ${port}!`
+                // Connecter la BDD couch
+                couchDbConnect()
+                .then( (couchDb) => {
+                    // Start server
+                    server.listen( port, () => {
+                        console.log({
+                            mongo: `BDD is connected ${db}!`,
+                            server: `Server listening on port ${port}!`,
+                            couchDb: `couchDb is connected ${couchDb}!`
+                        });
                     });
-                });
+                })
+                .catch( err => console.log(`Error couchDb ${err}`) );
             })
             .catch( err => console.log(`Error MongoDB ${err}`) );
 
-            // Connecter la BDD couch
-            couchDbConnect()
-            .then(db => {
-                console.log({
-                    couchDb: `couchDb is connected ${db}!`
-                });
-            });
+            
         }
     }
 

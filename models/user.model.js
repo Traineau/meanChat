@@ -17,7 +17,7 @@ Config
     }); 
 
     // Méthode
-    userSchema.methods.generateJwt = () => {
+    userSchema.methods.generateJwt = function() {
         // set expiration
         const expiry = new Date();
         expiry.setDate(expiry.getDate() + 59);
@@ -25,10 +25,11 @@ Config
         // JWT creation
         return jwt.sign({
             _id: this._id,
+            name: this.name,
             password: this.password,
             email: this.email,
             expireIn: '10s',
-            exp: parseInt(expiry.getTime() / 100, 10)
+            exp: parseInt(expiry.getTime() + 100, 10)
         }, process.env.JWT_SECRET);
     };
 //

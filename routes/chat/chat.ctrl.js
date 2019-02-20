@@ -1,10 +1,8 @@
 /* 
 Imports
 */
-    // Node
-    const bcrypt = require('bcryptjs');
-    
     // Inner
+    const ChatModel = require('../../models/chat.model');
 //
 
 
@@ -13,7 +11,9 @@ Méthodes CRUD
 */
     const createItem = (body) => {
         return new Promise( (resolve, reject) => {
-            
+            ChatModel.create(body)
+            .then(mongoResponse => resolve(mongoResponse))
+            .catch(mongoResponse => reject(mongoResponse))
         });
     };
 
