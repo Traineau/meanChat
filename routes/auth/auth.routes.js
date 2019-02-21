@@ -25,7 +25,7 @@ class AuthRouterClass {
                 return sendBodyError(res, 'No body data provided');
             }
             // Check fields in the body
-            const { miss, extra, ok } = checkFields(
+            const { ok, extra, miss } = checkFields(
                 ['name', 'email', 'password'],
                 req.body
             );

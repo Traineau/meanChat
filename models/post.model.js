@@ -1,6 +1,8 @@
 /* 
 Import
 */
+
+// Template de model mongoose
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 //

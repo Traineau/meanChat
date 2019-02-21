@@ -29,7 +29,6 @@ export class ChatPageComponent implements OnInit {
 
   constructor(private router: Router, private ngZone: NgZone, private authService: AuthService) {
 
-    // Redirection sécurisée de manière parfaite
     if(authService.isLoggedIn() == false){
       this.router.navigate(['/'])
     }
@@ -92,7 +91,7 @@ export class ChatPageComponent implements OnInit {
     // On crée un nouveau document en local (qui va se syncroniser avec la bdd serveur)
     this.db.put({
       _id: Date.now().toString(),
-      name: this.authService.userName, // TODO : Recuperer le pseudo du mec via son token
+      name: this.authService.userName,
       content: this.messageInput
     });
 

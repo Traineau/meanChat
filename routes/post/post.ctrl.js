@@ -1,9 +1,8 @@
 /* 
 Imports
 */
-    // Node
-    const bcrypt = require('bcryptjs');
-    
+    // Template de controler    
+
     // Inner
     const PostModel = require('../../models/post.model');
 //

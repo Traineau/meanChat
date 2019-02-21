@@ -3,6 +3,8 @@ Import & config
 */
     const express = require('express');
     const postRouter = express.Router();
+
+    // Template de route
 //
 
 /* 
