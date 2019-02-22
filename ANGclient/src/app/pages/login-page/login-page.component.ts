@@ -21,7 +21,6 @@ export class LoginPageComponent implements OnInit {
   public loginUser(): void {
     this.authService
       .login(this.loginData)
-      // Stocke le nom de l'utilisateur
       .then((apiResponse) => this.authService.userName = apiResponse.data.name)
       .catch(apiResponse => console.error(apiResponse));
 

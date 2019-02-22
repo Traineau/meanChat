@@ -35,17 +35,17 @@ class ChatRouterClass {
 
         // Read
         chatRouter.get( '/', (req, res) => {
-            res.json( { msg: "Read Post" } )
+            res.json( { msg: "Read chat" } )
         })
 
         // Update
         chatRouter.put( '/', (req, res) => {
-            res.json( { msg: "Update Post" } )
+            res.json( { msg: "Update chat" } )
         })
 
         // Delete
         chatRouter.delete( '/', (req, res) => {
-            res.json( { msg: "Delete Post" } )
+            res.json( { msg: "Delete chat" } )
         })
     }
 

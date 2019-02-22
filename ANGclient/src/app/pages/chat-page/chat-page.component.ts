@@ -33,36 +33,29 @@ export class ChatPageComponent implements OnInit {
       this.router.navigate(['/'])
     }
     if (!this.isInstantiated) {
-      // Base de données coté client
       this.db = new PouchDB('node-chat');
       this.isInstantiated = true;
     }
 
-    // Options de synchronisation des bases de données
     const options = {
       live: true,
       retry: true,
       continuous: true
     };
 
-    // Base de données serveur unique
     const remoteDb = 'http://localhost:5984/node-chat';
 
-    // Syncronisation des bases de données remote et client
     this.db.sync(remoteDb, options);
 
     this.messageInput = null;
   }
 
-  // A l'initialisation du composent
   ngOnInit() {
-    // On recupere les données locales
     this.db
       .allDocs({
-        include_docs: true // Recuperation du contenu des docs
+        include_docs: true
       })
       .then(result => {
-        // Si ya un changement en local
         this.db
           .changes({
             live: true,
@@ -70,13 +63,10 @@ export class ChatPageComponent implements OnInit {
             include_docs: true
           })
           .on('change', change => {
-            // Trigger la fonction handleChange pour actualiser le dom quand il y a un changement
             this.handleChange(change);
           });
 
-        // Actualisation du début
         result.rows.map(row => {
-          // Push des données dans notre variable message
           this.messages.push({
             _id: row.doc._id,
             author: row.doc.name,
@@ -86,9 +76,7 @@ export class ChatPageComponent implements OnInit {
       });
   }
 
-  // Pour chaque nouveau message
   public newMessage() {
-    // On crée un nouveau document en local (qui va se syncroniser avec la bdd serveur)
     this.db.put({
       _id: Date.now().toString(),
       name: this.authService.userName,
@@ -98,7 +86,6 @@ export class ChatPageComponent implements OnInit {
     this.messageInput = "";
   }
 
-  // Actualisation du DOM
   public handleChange(change) {
     this.ngZone.run(() => {
       let changedDoc = null;
